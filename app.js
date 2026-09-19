@@ -50,12 +50,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
     renderPage(currentPage);
 
+    // ربط زر "الصفحة التالية" للانتقال حصرياً لـ الصفحة التالية رقمياً
     document.getElementById('nextPageBtn')?.addEventListener('click', () => {
-      if (currentPage < totalPages) changePage(1);
+      if (currentPage < totalPages) {
+        changePage(1);
+      }
     });
 
+    // ربط زر "الصفحة السابقة" للانتقال حصرياً لـ الصفحة السابقة رقمياً
     document.getElementById('prevPageBtn')?.addEventListener('click', () => {
-      if (currentPage > 1) changePage(-1);
+      if (currentPage > 1) {
+        changePage(-1);
+      }
     });
     
     pageInput?.addEventListener('change', (e) => {
@@ -80,8 +86,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.getElementById('toggleMaskBtn')?.addEventListener('click', toggleMaskAll);
     document.getElementById('quickTestBtn')?.addEventListener('click', toggleMaskRandom);
-    
-    // ربط زر تصفير الأخطاء بمتطابق العنصر في واجهة المستخدم
     document.getElementById('resetMistakesBtn')?.addEventListener('click', resetMistakes);
   }
 
@@ -97,6 +101,7 @@ document.addEventListener('DOMContentLoaded', () => {
       surahSelect.appendChild(opt);
     });
 
+    // القائمة المنسدلة وحدها هي التي تنتقل إلى بداية السورة المختارة
     surahSelect.addEventListener('change', (e) => {
       let selectedSurah = parseInt(e.target.value);
       if (!selectedSurah) return;
@@ -136,22 +141,18 @@ document.addEventListener('DOMContentLoaded', () => {
         span.className = 'ayah';
         span.textContent = `${v.text} ﴿${v.verse}﴾ `;
         
-        // الضغط العادي لإخفاء أو إظهار الكلمات (للتدرب على الحفظ)
         span.addEventListener('click', () => {
           span.classList.toggle('masked');
         });
 
-        // الضغط بزر الماوس الأيمن لتسجيل الخطأ أو إزالته
         span.addEventListener('contextmenu', (e) => {
-          e.preventDefault(); // منع القائمة المنسدلة لل متصفح
+          e.preventDefault();
           span.classList.toggle('error');
-          
           if (span.classList.contains('error')) {
             mistakesCount++;
           } else {
             mistakesCount = Math.max(0, mistakesCount - 1);
           }
-          
           if (mistakesCountDisplay) {
             mistakesCountDisplay.textContent = mistakesCount;
           }
@@ -160,7 +161,7 @@ document.addEventListener('DOMContentLoaded', () => {
         pageDiv.appendChild(span);
       });
     } else {
-      pageDiv.innerHTML = `<p style="text-align:center; padding: 20px;">صفحة المصحف رقم (${page}) - جاري التحميل أو غير متوفرة في الملف.</p>`;
+      pageDiv.innerHTML = `<p style="text-align:center; padding: 20px;">صفحة المصحف رقم (${page}) - غير متوفرة أو جاري تحميلها.</p>`;
     }
 
     quranContainer.appendChild(pageDiv);
@@ -175,6 +176,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
+  // دالة تغيير الصفحة خطوة بخطوة (للأمام +1 أو للخلف -1) بناءً على أزرار التصفح
   function changePage(direction) {
     let newPage = currentPage + direction;
     if (newPage >= 1 && newPage <= totalPages) {
@@ -210,7 +212,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (mistakesCountDisplay) {
       mistakesCountDisplay.textContent = mistakesCount;
     }
-    // إزالة علامة الخطأ الحمراء عن جميع آيات الصفحة الحالية
     document.querySelectorAll('.ayah.error').forEach(ayah => {
       ayah.classList.remove('error');
     });
