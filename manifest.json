@@ -1,0 +1,16 @@
+{
+  "short_name": "مصحفي",
+  "name": "مصحفي المنسق - الحفظ والمراجعة",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "type": "image/svg+xml",
+      "sizes": "512x512"
+    }
+  ],
+  "start_url": "./index.html",
+  "background_color": "#071913",
+  "theme_color": "#0d3b2e",
+  "display": "standalone",
+  "orientation": "portrait"
+}

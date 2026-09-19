@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>مصحفي المنسق - الحفظ والمراجعة</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="manifest" href="manifest.json">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Amiri+Quran&family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body class="dark-theme">
+
+  <!-- الهيدر الرئيسي -->
+  <header class="app-header">
+    <div class="brand">
+      <h1>مصحفي</h1>
+      <span class="badge">المساعد للتحفيظ</span>
+    </div>
+
+    <div class="controls">
+      <!-- أزرار تكبير وتصغير الخط -->
+      <div class="font-controls">
+        <button id="fontIncreaseBtn" class="icon-btn" title="تكبير الخط">A+</button>
+        <button id="fontDecreaseBtn" class="icon-btn" title="تصغير الخط">A-</button>
+      </div>
+
+      <!-- زر تبديل الوضع الليلي/النهاري -->
+      <button id="themeToggleBtn" class="icon-btn theme-btn" title="تبديل الوضع">
+        <span id="themeIcon">🌙</span>
+      </button>
+
+      <select id="viewMode" class="dropdown">
+        <option value="page">عرض بالصفحة</option>
+        <option value="surah">عرض بالسورة</option>
+      </select>
+
+      <select id="surahSelect" class="dropdown"></select>
+      
+      <input type="number" id="pageInput" class="input-number" min="1" max="604" placeholder="رقم الصفحة">
+    </div>
+  </header>
+
+  <!-- شريط الأدوات والمؤشرات -->
+  <div class="tools-bar">
+    <div class="stats">
+      <span>عدد الأخطاء المسجلة: <strong id="mistakesCount">0</strong></span>
+    </div>
+    
+    <div class="action-buttons">
+      <button id="toggleMaskBtn" class="btn warning-btn">إخفاء/إظهار الكل</button>
+      <button id="quickTestBtn" class="btn primary-btn">اختبار سريع (تغطية)</button>
+      <button id="resetMistakesBtn" class="btn danger-btn-outline">تصفير الأخطاء</button>
+    </div>
+  </div>
+
+  <!-- شريط التقدم -->
+  <div class="progress-container">
+    <div id="progressBar" class="progress-bar"></div>
+  </div>
+
+  <!-- حاوية المصحف -->
+  <main id="quranContainer" class="quran-container"></main>
+
+  <!-- الشريط السفلي للتنقل -->
+  <footer class="navigation-footer">
+    <button id="prevPageBtn" class="btn nav-btn">الصفحة السابقة</button>
+    <span class="page-indicator">صفحة <strong id="currentPageDisplay">1</strong> من 604</span>
+    <button id="nextPageBtn" class="btn nav-btn">الصفحة التالية</button>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>

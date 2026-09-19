@@ -1,0 +1,186 @@
+:root {
+  --bg-color: #f4f6f5;
+  --header-bg: #ffffff;
+  --text-color: #2c3e50;
+  --primary-color: #0d3b2e;
+  --accent-color: #27ae60;
+  --border-color: #dcdde1;
+  --card-bg: #ffffff;
+  --mask-bg: #2c3e50;
+}
+
+body.dark-theme {
+  --bg-color: #071913;
+  --header-bg: #0d3b2e;
+  --text-color: #ecf0f1;
+  --primary-color: #1abc9c;
+  --accent-color: #2ecc71;
+  --border-color: #164e3f;
+  --card-bg: #0f2a22;
+  --mask-bg: #34495e;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: 'Tajawal', sans-serif;
+}
+
+body {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  transition: background 0.3s, color 0.3s;
+}
+
+.app-header {
+  background-color: var(--header-bg);
+  padding: 15px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 2px solid var(--border-color);
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.brand h1 {
+  font-size: 1.8rem;
+  color: var(--primary-color);
+}
+
+.badge {
+  font-size: 0.8rem;
+  background: var(--accent-color);
+  color: #fff;
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.icon-btn, .btn {
+  padding: 8px 12px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: opacity 0.2s;
+}
+
+.icon-btn {
+  background: var(--border-color);
+  color: var(--text-color);
+}
+
+.icon-btn:hover, .btn:hover {
+  opacity: 0.85;
+}
+
+.dropdown, .input-number {
+  padding: 8px;
+  border-radius: 6px;
+  border: 1px solid var(--border-color);
+  background: var(--header-bg);
+  color: var(--text-color);
+}
+
+.tools-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
+  background: var(--header-bg);
+  border-bottom: 1px solid var(--border-color);
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.primary-btn { background: #2980b9; color: white; }
+.warning-btn { background: #f39c12; color: white; }
+.danger-btn-outline { background: transparent; border: 1px solid #c0392b; color: #c0392b; }
+
+.progress-container {
+  width: 100%;
+  height: 6px;
+  background: var(--border-color);
+}
+
+.progress-bar {
+  height: 100%;
+  width: 0%;
+  background: var(--accent-color);
+  transition: width 0.3s;
+}
+
+.quran-container {
+  flex: 1;
+  padding: 20px;
+  max-width: 900px;
+  margin: 0 auto;
+  width: 100%;
+  line-height: 2.2;
+}
+
+.quran-text {
+  font-family: 'Amiri Quran', serif;
+  font-size: 1.8rem;
+  text-align: justify;
+  background: var(--card-bg);
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+  border: 1px solid var(--border-color);
+}
+
+.ayah {
+  display: inline;
+  cursor: pointer;
+  padding: 2px 4px;
+  border-radius: 4px;
+  transition: background 0.2s;
+}
+
+.ayah:hover {
+  background: rgba(46, 204, 113, 0.15);
+}
+
+/* تنسيق إخفاء الكلمات لاختبار الحفظ */
+.ayah.masked {
+  color: transparent !important;
+  text-shadow: 0 0 10px var(--text-color);
+  background-color: var(--border-color);
+  user-select: none;
+}
+
+.ayah.error {
+  background-color: rgba(192, 57, 43, 0.3) !important;
+  border-bottom: 2px solid #c0392b;
+}
+
+.navigation-footer {
+  background: var(--header-bg);
+  padding: 12px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 2px solid var(--border-color);
+}
+
+.nav-btn {
+  background: var(--primary-color);
+  color: white;
+}
