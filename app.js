@@ -5,13 +5,28 @@ document.addEventListener('DOMContentLoaded', () => {
   let mistakesCount = 0;
   let isAllMasked = false;
 
+  // أسماء السور مرتبة حسب رقم السورة (من 1 إلى 114)
+  const surahNames = [
+    "الفاتحة", "البقرة", "آل عمران", "النساء", "المائدة", "الأنعام", "الأعراف", "الأنفال", "التوبة", "يونس",
+    "هود", "يوسف", "الرعد", "إبراهيم", "الحجر", "النحل", "الإسراء", "الكهف", "مريم", "طه",
+    "الأنبياء", "الحج", "المؤمنون", "النور", "الفرقان", "الشعراء", "النمل", "القصص", "العنكبوت", "الروم",
+    "لقمان", "السجدة", "الأحزاب", "سبأ", "فاطر", "يس", "الصافات", "ص", "الزمر", "غافر",
+    "فصلت", "الشورى", "الزخرف", "الدخان", "الجاثية", "الأحقاف", "محمد", "الفتح", "الحجرات", "ق",
+    "الذاريات", "الطور", "النجم", "القمر", "الرحمن", "الواقعة", "الحديد", "المجادلة", "الحشر", "الممتحنة",
+    "الصف", "الجمعة", "المنافقون", "التغابن", "الطلاق", "التحريم", "الملك", "القلم", "الحاقة", "المعارج",
+    "نوح", "الجن", "المزمل", "المدثر", "القيامة", "الإنسان", "المرسلات", "النبأ", "النازعات", "عبس",
+    "التكوير", "الانفطار", "المطففين", "الانشقاق", "البروج", "الطارق", "الأعلى", "الغاشية", "الفجر", "البلد",
+    "الشمس", "الليل", "الضحى", "الشرح", "التين", "العلق", "القدر", "البينة", "الزلزلة", "العاديات",
+    "القارعة", "التكاثر", "العصر", "الهمزة", "الفيل", "قريش", "الماعون", "الكوثر", "الكافرون", "النصر",
+    "المسد", "الإخلاص", "الفلق", "الناس"
+  ];
+
   const quranContainer = document.getElementById('quranContainer');
   const pageInput = document.getElementById('pageInput');
   const currentPageDisplay = document.getElementById('currentPageDisplay');
   const progressBar = document.getElementById('progressBar');
   const mistakesCountDisplay = document.getElementById('mistakesCount');
   const surahSelect = document.getElementById('surahSelect');
-  const viewMode = document.getElementById('viewMode');
 
   // جلب بيانات القرآن الكريم
   fetch('quran_data.json')
@@ -48,29 +63,45 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.getElementById('toggleMaskBtn').addEventListener('click', toggleMaskAll);
     document.getElementById('quickTestBtn').addEventListener('click', toggleMaskRandom);
-    document.getElementById('resetMistakesBtn',).addEventListener('click', resetMistakes);
+    document.getElementById('resetMistakesBtn').addEventListener('click', resetMistakes);
   }
 
   function populateSurahList() {
     surahSelect.innerHTML = '<option value="">اختر السورة</option>';
-    // افتراضياً استخراج السور من البيانات المتاحة
-    let chapters = new Set();
-    Object.values(quranData).forEach(verses => {
-      verses.forEach(v => chapters.add(v.chapter));
-    });
     
-    chapters.forEach(ch => {
+    // تعبئة القائمة بأسماء السور مع تخزين رقم السورة كـ value
+    surahNames.forEach((name, index) => {
+      let surahNumber = index + 1;
       let opt = document.createElement('option');
-      opt.value = ch;
-      opt.textContent = `سورة رقم ${ch}`;
+      opt.value = surahNumber;
+      opt.textContent = `${surahNumber}. ${name}`;
       surahSelect.appendChild(opt);
     });
 
+    // الحدث عند اختيار سورة بالاسم
     surahSelect.addEventListener('change', (e) => {
-      if (!e.target.value) return;
-      // بحث عن أول صفحة تحتوي على السورة (هنا كمثال توضيحي مبسط)
-      renderPage(currentPage);
+      let selectedSurah = parseInt(e.target.value);
+      if (!selectedSurah) return;
+
+      // البحث عن أول صفحة في ملف الـ JSON تحتوي على آية تنتمي لهذه السورة
+      let targetPage = findPageBySurah(selectedSurah);
+      if (targetPage) {
+        renderPage(targetPage);
+      }
     });
+  }
+
+  // دالة للبحث عن رقم الصفحة التي تبدأ فيها السورة المحددة
+  function findPageBySurah(surahNum) {
+    for (let page = 1; page <= 604; page++) {
+      if (quranData[page]) {
+        let found = quranData[page].some(v => v.chapter === surahNum);
+        if (found) {
+          return page;
+        }
+      }
+    }
+    return 1; // افتراضي في حال لم يتم العثور عليها
   }
 
   function renderPage(page) {
@@ -84,8 +115,7 @@ document.addEventListener('DOMContentLoaded', () => {
     pageDiv.className = 'quran-text';
     pageDiv.style.fontSize = `${currentFontSize}rem`;
 
-    // عرض الآيات الخاصة بالصفحة أو البيانات المتاحة في الملف
-    let verses = quranData[page] || quranData[1]; // كخيار احتياطي إذا لم توجد الصفحة بالملف
+    let verses = quranData[page] || quranData[1];
 
     if (verses) {
       verses.forEach(v => {
@@ -93,11 +123,12 @@ document.addEventListener('DOMContentLoaded', () => {
         span.className = 'ayah';
         span.textContent = `${v.text} ﴿${v.verse}﴾ `;
         
-        // النقر لإخفاء/إظهار الآية أو تسجيل خطأ عند الضغط المطول أو النقر المزدوج
+        // النقر الفردي للإخفاء/الإظهار
         span.addEventListener('click', () => {
           span.classList.toggle('masked');
         });
 
+        // النقر بزر الماوس الأيمن لتسجيل الخطأ
         span.addEventListener('contextmenu', (e) => {
           e.preventDefault();
           span.classList.toggle('error');
@@ -112,10 +143,20 @@ document.addEventListener('DOMContentLoaded', () => {
         pageDiv.appendChild(span);
       });
     } else {
-      pageDiv.innerHTML = '<p style="text-align:center;">جاري اضافة محتوى هذه الصفحة...</p>';
+      pageDiv.innerHTML = '<p style="text-align:center;">جاري تحميل محتوى هذه الصفحة...</p>';
     }
 
     quranContainer.appendChild(pageDiv);
+
+    // تحديث السورة المحددة في القائمة تلقائياً بناءً على أول آية في الصفحة الحالية
+    updateSelectedSurahInDropdown(verses);
+  }
+
+  function updateSelectedSurahInDropdown(verses) {
+    if (verses && verses.length > 0) {
+      let currentSurah = verses[0].chapter;
+      surahSelect.value = currentSurah;
+    }
   }
 
   function changePage(direction) {
