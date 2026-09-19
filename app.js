@@ -1,12 +1,11 @@
 document.addEventListener('DOMContentLoaded', () => {
   let quranData = {};
   let currentPage = 1;
-  const totalPages = 604; // عدد صفحات المصحف الشريف الورقي
+  const totalPages = 604;
   let currentFontSize = 1.8;
   let mistakesCount = 0;
   let isAllMasked = false;
 
-  // أسماء السور الـ 114 للبحث والربط مع القائمة
   const surahNames = [
     "الفاتحة", "البقرة", "آل عمران", "النساء", "المائدة", "الأنعام", "الأعراف", "الأنفال", "التوبة", "يونس",
     "هود", "يوسف", "الرعد", "إبراهيم", "الحجر", "النحل", "الإسراء", "الكهف", "مريم", "طه",
@@ -25,12 +24,11 @@ document.addEventListener('DOMContentLoaded', () => {
   const quranContainer = document.getElementById('quranContainer');
   const pageInput = document.getElementById('pageInput');
   const currentPageDisplay = document.getElementById('currentPageDisplay');
-  const totalPagesDisplay = document.getElementById('totalPagesDisplay'); // لعرض العدد الكلي (604) إن وجد بالواجهة
+  const totalPagesDisplay = document.getElementById('totalPagesDisplay');
   const progressBar = document.getElementById('progressBar');
   const mistakesCountDisplay = document.getElementById('mistakesCount');
   const surahSelect = document.getElementById('surahSelect');
 
-  // جلب بيانات القرآن الكريم
   fetch('quran_data.json')
     .then(response => response.json())
     .then(data => {
@@ -42,7 +40,6 @@ document.addEventListener('DOMContentLoaded', () => {
   function initApp() {
     populateSurahList();
     
-    // ضبط حدد مدخل الصفحة ليشمل فقط الـ 604 صفحة الورقية
     if (pageInput) {
       pageInput.min = 1;
       pageInput.max = totalPages;
@@ -53,67 +50,41 @@ document.addEventListener('DOMContentLoaded', () => {
 
     renderPage(currentPage);
 
-    // ربط أحداث أزرار التنقل (للأمام وللخلف)
-    const nextBtn = document.getElementById('nextPageBtn');
-    const prevBtn = document.getElementById('prevPageBtn');
+    document.getElementById('nextPageBtn')?.addEventListener('click', () => {
+      if (currentPage < totalPages) changePage(1);
+    });
+
+    document.getElementById('prevPageBtn')?.addEventListener('click', () => {
+      if (currentPage > 1) changePage(-1);
+    });
     
-    if (nextBtn) {
-      nextBtn.addEventListener('click', () => {
-        if (currentPage < totalPages) {
-          changePage(1);
-        }
-      });
-    }
+    pageInput?.addEventListener('change', (e) => {
+      let page = parseInt(e.target.value);
+      if (page >= 1 && page <= totalPages) {
+        renderPage(page);
+      } else {
+        pageInput.value = currentPage;
+      }
+    });
 
-    if (prevBtn) {
-      prevBtn.addEventListener('click', () => {
-        if (currentPage > 1) {
-          changePage(-1);
-        }
-      });
-    }
+    document.getElementById('fontIncreaseBtn')?.addEventListener('click', () => adjustFontSize(0.2));
+    document.getElementById('fontDecreaseBtn')?.addEventListener('click', () => adjustFontSize(-0.2));
     
-    // إدخال رقم الصفحة مباشرة والانتقال إليها
-    if (pageInput) {
-      pageInput.addEventListener('change', (e) => {
-        let page = parseInt(e.target.value);
-        if (page >= 1 && page <= totalPages) {
-          renderPage(page);
-        } else {
-          pageInput.value = currentPage; // إعادة القيمة القديمة في حال أدخل رقماً خاطئاً
-        }
-      });
-    }
+    document.getElementById('themeToggleBtn')?.addEventListener('click', () => {
+      document.body.classList.toggle('dark-theme');
+      const themeIcon = document.getElementById('themeIcon');
+      if (themeIcon) {
+        themeIcon.textContent = document.body.classList.contains('dark-theme') ? '🌙' : '☀️';
+      }
+    });
 
-    // زر تكبير وتصغير الخط
-    const fontInc = document.getElementById('fontIncreaseBtn');
-    const fontDec = document.getElementById('fontDecreaseBtn');
-    if (fontInc) fontInc.addEventListener('click', () => adjustFontSize(0.2));
-    if (fontDec) fontDec.addEventListener('click', () => adjustFontSize(-0.2));
+    document.getElementById('toggleMaskBtn')?.addEventListener('click', toggleMaskAll);
+    document.getElementById('quickTestBtn')?.addEventListener('click', toggleMaskRandom);
     
-    // تبديل الوضع الليلي
-    const themeToggle = document.getElementById('themeToggleBtn');
-    if (themeToggle) {
-      themeToggle.addEventListener('click', () => {
-        document.body.classList.toggle('dark-theme');
-        const themeIcon = document.getElementById('themeIcon');
-        if (themeIcon) {
-          themeIcon.textContent = document.body.classList.contains('dark-theme') ? '🌙' : '☀️';
-        }
-      });
-    }
-
-    // أدوات التحفيظ والتسميع
-    const maskBtn = document.getElementById('toggleMaskBtn');
-    const testBtn = document.getElementById('quickTestBtn');
-    const resetBtn = document.getElementById('resetMistakesBtn');
-
-    if (maskBtn) maskBtn.addEventListener('click', toggleMaskAll);
-    if (testBtn) testBtn.addEventListener('click', toggleMaskRandom);
-    if (resetBtn) resetBtn.addEventListener('click', resetMistakes);
+    // ربط زر تصفير الأخطاء بمتطابق العنصر في واجهة المستخدم
+    document.getElementById('resetMistakesBtn')?.addEventListener('click', resetMistakes);
   }
 
-  // تعبئة قائمة السور بأسماء المصحف
   function populateSurahList() {
     if (!surahSelect) return;
     surahSelect.innerHTML = '<option value="">اختر السورة</option>';
@@ -129,28 +100,21 @@ document.addEventListener('DOMContentLoaded', () => {
     surahSelect.addEventListener('change', (e) => {
       let selectedSurah = parseInt(e.target.value);
       if (!selectedSurah) return;
-
       let targetPage = findPageBySurah(selectedSurah);
-      if (targetPage) {
-        renderPage(targetPage);
-      }
+      if (targetPage) renderPage(targetPage);
     });
   }
 
-  // البحث عن رقم صفحة المصحف الورقي التي تبدأ فيها السورة
   function findPageBySurah(surahNum) {
     for (let page = 1; page <= totalPages; page++) {
       if (quranData[page]) {
         let found = quranData[page].some(v => v.chapter === surahNum);
-        if (found) {
-          return page;
-        }
+        if (found) return page;
       }
     }
     return 1;
   }
 
-  // دالة رسم وعرض الصفحة الحالية من المصحف
   function renderPage(page) {
     currentPage = page;
     if (currentPageDisplay) currentPageDisplay.textContent = page;
@@ -164,7 +128,6 @@ document.addEventListener('DOMContentLoaded', () => {
     pageDiv.className = 'quran-text';
     pageDiv.style.fontSize = `${currentFontSize}rem`;
 
-    // جلب آيات الصفحة المطابقة لصفحات المصحف الورقي (1 إلى 604)
     let verses = quranData[page] || quranData[String(page)];
 
     if (verses && Array.isArray(verses) && verses.length > 0) {
@@ -173,32 +136,34 @@ document.addEventListener('DOMContentLoaded', () => {
         span.className = 'ayah';
         span.textContent = `${v.text} ﴿${v.verse}﴾ `;
         
-        // النقر للإخفاء/الإظهار (للتدرب على الحفظ)
+        // الضغط العادي لإخفاء أو إظهار الكلمات (للتدرب على الحفظ)
         span.addEventListener('click', () => {
           span.classList.toggle('masked');
         });
 
-        // النقر بزر الفأرة الأيمن لتسجيل الخطأ أثناء التسميع
+        // الضغط بزر الماوس الأيمن لتسجيل الخطأ أو إزالته
         span.addEventListener('contextmenu', (e) => {
-          e.preventDefault();
+          e.preventDefault(); // منع القائمة المنسدلة لل متصفح
           span.classList.toggle('error');
+          
           if (span.classList.contains('error')) {
             mistakesCount++;
           } else {
             mistakesCount = Math.max(0, mistakesCount - 1);
           }
-          if (mistakesCountDisplay) mistakesCountDisplay.textContent = mistakesCount;
+          
+          if (mistakesCountDisplay) {
+            mistakesCountDisplay.textContent = mistakesCount;
+          }
         });
 
         pageDiv.appendChild(span);
       });
     } else {
-      pageDiv.innerHTML = `<p style="text-align:center; padding: 20px;">صفحة المصحف رقم (${page}) - جاري التحميل أو غير متوفرة في الملف الحالي.</p>`;
+      pageDiv.innerHTML = `<p style="text-align:center; padding: 20px;">صفحة المصحف رقم (${page}) - جاري التحميل أو غير متوفرة في الملف.</p>`;
     }
 
     quranContainer.appendChild(pageDiv);
-
-    // تحديث السورة المحددة في القائمة المنسدلة تلقائياً بما يوافق الصفحة الحالية
     updateSelectedSurahInDropdown(verses);
   }
 
@@ -225,19 +190,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function toggleMaskAll() {
     isAllMasked = !isAllMasked;
-    const ayahs = quranContainer.querySelectorAll('.ayah');
-    ayahs.forEach(ayah => {
-      if (isAllMasked) {
-        ayah.classList.add('masked');
-      } else {
-        ayah.classList.remove('masked');
-      }
+    quranContainer.querySelectorAll('.ayah').forEach(ayah => {
+      ayah.classList.toggle('masked', isAllMasked);
     });
   }
 
   function toggleMaskRandom() {
-    const ayahs = quranContainer.querySelectorAll('.ayah');
-    ayahs.forEach(ayah => {
+    quranContainer.querySelectorAll('.ayah').forEach(ayah => {
       if (Math.random() > 0.5) {
         ayah.classList.add('masked');
       } else {
@@ -248,7 +207,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function resetMistakes() {
     mistakesCount = 0;
-    if (mistakesCountDisplay) mistakesCountDisplay.textContent = mistakesCount;
-    document.querySelectorAll('.ayah').forEach(ayah => ayah.classList.remove('error'));
+    if (mistakesCountDisplay) {
+      mistakesCountDisplay.textContent = mistakesCount;
+    }
+    // إزالة علامة الخطأ الحمراء عن جميع آيات الصفحة الحالية
+    document.querySelectorAll('.ayah.error').forEach(ayah => {
+      ayah.classList.remove('error');
+    });
   }
 });
