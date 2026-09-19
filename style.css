@@ -34,6 +34,7 @@ body {
   display: flex;
   flex-direction: column;
   transition: background 0.3s, color 0.3s;
+  padding-bottom: 70px; /* مسافة إضافية أسفل الصفحة لكي لا يغطي الشريط محتوى المصحف */
 }
 
 .app-header {
@@ -45,6 +46,9 @@ body {
   border-bottom: 2px solid var(--border-color);
   flex-wrap: wrap;
   gap: 10px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
 }
 
 .brand h1 {
@@ -102,6 +106,9 @@ body {
   border-bottom: 1px solid var(--border-color);
   flex-wrap: wrap;
   gap: 10px;
+  position: sticky;
+  top: 73px; /* تحت الهيدر مباشرة */
+  z-index: 99;
 }
 
 .action-buttons {
@@ -117,6 +124,9 @@ body {
   width: 100%;
   height: 6px;
   background: var(--border-color);
+  position: sticky;
+  top: 130px;
+  z-index: 98;
 }
 
 .progress-bar {
@@ -171,6 +181,7 @@ body {
   border-bottom: 2px solid #c0392b;
 }
 
+/* التعديل لجعل شريط التنقل السفلي ثابتاً (Fixed) في أسفل الشاشة دائماً */
 .navigation-footer {
   background: var(--header-bg);
   padding: 12px 20px;
@@ -178,6 +189,12 @@ body {
   justify-content: space-between;
   align-items: center;
   border-top: 2px solid var(--border-color);
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+  box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.08);
 }
 
 .nav-btn {
